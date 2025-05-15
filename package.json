@@ -1,10 +1,10 @@
 {
-  "name": "@hu-bcs1/islamic-inheritance-calculator",
+  "name": "webevis-inheritance-calculator",
   "version": "1.4.2",
-  "description": "islamic inheritance calculator",
+  "description": "Islamic inheritance calculator",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "author": "Hormuud BSC1 group B",
+  "author": "Webevis",
   "license": "MIT",
   "scripts": {
     "test": "jest",
@@ -26,5 +26,8 @@
   "jest": {
     "preset": "ts-jest",
     "testRegex": "/__tests__/.*\\.test\\.ts$"
-  }
+  },
+  "files": [
+    "lib"
+  ]
 }
