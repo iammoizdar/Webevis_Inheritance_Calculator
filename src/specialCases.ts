@@ -9,7 +9,7 @@ import {
 } from './result'
 import { sixth, quarter, third, half, nothing } from './quota'
 import { distribute } from './utils'
-import { getMadhhabFunctions } from './madhab'
+// import { getMadhhabFunctions } from './madhab'
 import { Madhhab } from './madhab/default'
 
 
@@ -18,7 +18,7 @@ export function calculateSpecialCases(
   asabaResult: Result[],
   madhhab: Madhhab
 ): Result[] {
-  const { applyAwl, applyRadd, applyUmariyyah } = getMadhhabFunctions(madhhab)
+  // const { applyAwl, applyRadd, applyUmariyyah } = getMadhhabFunctions(madhhab)
   const results = [...fardResult, ...asabaResult]
   // Pass madhhab to all cases that might need it
   return flow([
