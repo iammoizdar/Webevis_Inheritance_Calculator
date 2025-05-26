@@ -1,41 +1,24 @@
 import ahs from './asabaHeirs'
 import { Heirs } from './heir'
-import { Madhhab } from './madhab'
+import { Madhhab } from './madhab/default'
 import { unknown, nothing } from './quota'
 import { Result, sumResults } from './result'
 import { exists, count, distribute } from './utils'
 import Fraction from 'fraction.js'
 
 export function calculateTasib(heirs: Heirs, fardResult: Result[], madhhab: Madhhab): Result[] {
-  // filter out asaba that exist and sort them by their tasibRank
   const asabas = ahs
     .filter(ah => exists(heirs, ah.name))
-    .filter(ah => {
-      // If an heir is given the prescribed share, he/she drops from Ta’seeb
-      // father is an exception to this rule 
+    .filter(ah => !fardResult.find(fh => fh.name === ah.name) || ah.name === 'father')
 
-      // Example: Add madhhab-based exception logic if needed here
-      // e.g., if (madhhab === 'hanafi') { ... }
+  const qualifiedAsabas = asabas.filter(ah => asabas[0].tasibRank === ah.tasibRank)
 
-      return (
-        !fardResult.find(fh => fh.name === ah.name) ||
-        ah.name === 'father'
-      )
-    })
-
-  const qualifiedAsabas = asabas
-    .filter(ah => asabas[0].tasibRank === ah.tasibRank)
-
-  const results = qualifiedAsabas
-    .map(ah => {
-      const result: Result = {
-        name: ah.name,
-        count: count(heirs, ah.name),
-        type: 'tasib',
-        share: unknown
-      }
-      return result
-  })
+  const results: Result[] = qualifiedAsabas.map(ah => ({
+    name: ah.name,
+    count: count(heirs, ah.name),
+    type: 'tasib',  // literal type here
+    share: unknown
+  }))
 
   const whole = new Fraction(1)
   let remaining = whole.sub(sumResults(fardResult))
@@ -43,11 +26,15 @@ export function calculateTasib(heirs: Heirs, fardResult: Result[], madhhab: Madh
     remaining = nothing
   }
 
-  switch(results.length) {
-    case 0: return results
-    case 1: return distribute(results, remaining)
-    case 2: return jointTasib(results, remaining)
-    default: throw Error('qualified asaba types cannot be greater than two')
+  switch (results.length) {
+    case 0:
+      return results
+    case 1:
+      return distribute(results, remaining)
+    case 2:
+      return jointTasib(results, remaining)
+    default:
+      throw Error('qualified asaba types cannot be greater than two')
   }
 }
 

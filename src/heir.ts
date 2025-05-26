@@ -1,5 +1,5 @@
 import Fraction from 'fraction.js'
-import { Madhhab } from './madhab'
+import { Madhhab } from './madhab/default'
 
 type Spouse = 'husband' | 'wife'
 
@@ -27,6 +27,7 @@ export type Heirs = { [heir in Heir]: number }
 export interface FardHeir {
   name: Heir
   share: (heirs: Heirs, madhhab: Madhhab) => Fraction
+  proportion?: any  
 }
 
 export interface AsabaHeir {

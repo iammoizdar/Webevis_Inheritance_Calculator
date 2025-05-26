@@ -7,7 +7,7 @@ import {
 } from './result'
 import { exists, count, distribute, isZero } from './utils'
 import { sixth } from './quota'
-import { Madhhab } from './madhab'
+import { Madhhab } from './madhab/default'
 
 export function calculateFard(heirs: Heirs, madhhab: Madhhab): Result[] {
   const fardHiers = fhs.filter(fh => exists(heirs, fh.name))

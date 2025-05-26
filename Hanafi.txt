@@ -1,0 +1,9 @@
+| Issue                        | Hanafi            | Shafiʿi / Maliki / Hanbali | Impact                      |
+| ---------------------------- | ----------------- | -------------------------- | --------------------------- |
+| Grandfather with siblings    | Blocks them       | Shares with them           | Siblings may lose shares    |
+| Maternal siblings with full  | Inherit           | Sometimes blocked          | Maternal relatives affected |
+| ‘Awl                         | Avoid if possible | Fully applied              | Share reduction varies      |
+| Step-grandmother             | May inherit       | Never inherits             | Extended maternal rights    |
+| Daughter with granddaughter  | Blocks            | Granddaughter inherits     | Grandchildren’s rights      |
+| Uterine siblings with father | Can inherit       | Blocked                    | Sibling shares affected     |
+| Female taʿsīb                | Needs male        | More flexible              | Share hierarchy changes     |

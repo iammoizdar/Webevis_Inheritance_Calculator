@@ -33,14 +33,19 @@ export const distribute = (
 ) => {
   const total = sumBy(heirs, h => (h.proportion || 1) * h.count)
   return heirs.map(h => {
+    const shareFraction = amount
+      .mul((h.proportion || 1) * h.count)
+      .div(total)
+
     const result: Result = {
       name: h.name,
       count: h.count,
       type: h.type,
-      share: amount.mul((h.proportion || 1) * h.count, total)
+      share: shareFraction
     }
     return result
   })
 }
+
 
 export const isZero = (v: Fraction) => v.equals(new Fraction(0))

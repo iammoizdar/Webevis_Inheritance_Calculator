@@ -63,17 +63,33 @@ const Mother: FardHeir = {
   }
 }
 
+// const PaternalGrandFather: FardHeir = {
+//   name: 'paternal_grand_father',
+//   share: function(heirs, madhhab) {
+//     if (exists(heirs, 'father')) return nothing
+//     if (hasChild(heirs)) return sixth
+//     if (madhhab === 'hanafi') {
+//       if (exists(heirs, 'full_brother') || exists(heirs, 'full_sister')) return nothing
+//     }
+//     return nothing
+//   }
+// }
 const PaternalGrandFather: FardHeir = {
   name: 'paternal_grand_father',
   share: function(heirs, madhhab) {
     if (exists(heirs, 'father')) return nothing
     if (hasChild(heirs)) return sixth
+
     if (madhhab === 'hanafi') {
+      // Hanafi excludes paternal grandfather if full siblings exist
       if (exists(heirs, 'full_brother') || exists(heirs, 'full_sister')) return nothing
     }
+
+    // If no father, no children, and no full siblings (Hanafi or others)
     return nothing
   }
 }
+
 
 const PaternalGrandMother: FardHeir = {
   name: 'paternal_grand_mother',
@@ -128,6 +144,24 @@ const MaternalSibling: FardHeir = {
   }
 }
 
+const FullBrother: FardHeir = {
+  name: 'full_brother',
+  share: function(heirs, madhhab) {
+    if (madhhab === 'hanafi') {
+      // Hanafi: full brother usually inherits only as tasib (no fixed share)
+      return nothing
+    } else {
+      // Shafii and others:
+      // If no sons/daughters, full brother may inherit 1/3 fixed share
+      if (!exists(heirs, 'son') && !exists(heirs, 'daughter')) {
+        return third
+      }
+      return nothing
+    }
+  }
+}
+
+
 const fhs: FardHeir[] = [
   Daughter,
   Father,
@@ -140,7 +174,8 @@ const fhs: FardHeir[] = [
   PaternalGrandFather,
   PaternalGrandMother,
   PaternalSister,
-  Wife
+  Wife,
+  FullBrother
 ]
 
 export default fhs

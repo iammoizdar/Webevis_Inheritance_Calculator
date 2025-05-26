@@ -1,6 +1,6 @@
-import { calculate } from '../src/index'
+import { calculate, defaultHeirs } from '../src/index'
 import { Result, findFromResult, printResults } from '../src/result'
-import { Heir } from '../src/heir';
+import { Heir, Heirs } from '../src/heir';
 import Fraction from 'fraction.js';
 
 function checkResult(
@@ -21,6 +21,26 @@ function checkResult(
   expect(result.share).toEqual(share)
 }
 
+// function checkOptionalResult(
+//   results: Result[],
+//   heir: Heir | { name: Heir, type?: 'fard'|'tasib'|'special_case' },
+//   expectedShare: Fraction | null
+// ) {
+//   const result = (() => {
+//     if (typeof heir === 'string') return findFromResult(results, heir)
+//     if (heir.type) return findFromResult(results, heir.name, heir.type)
+//     return findFromResult(results, heir.name)
+//   })()
+
+//   if (expectedShare === null) {
+//     expect(result).toBeUndefined()
+//   } else {
+//     if (!result) throw Error(`${typeof heir === 'string' ? heir : heir.name} couldn't be found in result`)
+//     expect(result.share.equals(expectedShare)).toBe(true)
+//   }
+// }
+
+
 const f = (num: number, den: number = 1) => new Fraction(num, den)
 
 describe('Some edge cases', () => {
@@ -35,98 +55,177 @@ function findResult(results: Result[], heirName: string): Result | undefined {
   return results.find(r => r.name === heirName)
 }
 
-
-test('hanafi: 1 wife, 2 daughter, 1 paternal cousin', () => {
-  const result = calculate(
-    { wife: 1, daughter: 2, paternal_cousin: 1 },
-    'hanafi'
-  )
-  console.log(result, 'hanafi: 1 wife, 2 daughter, 1 paternal cousin')
-  checkResult(result, 'wife', f(1, 8))              // 1/8 is correct for wife
-  checkResult(result, 'daughter', f(2, 3))          // daughters get 2/3 collectively in Hanafi
-  checkResult(result, 'paternal_cousin', f(5, 24))  // cousin gets remainder 5/24 tasib
-})
-test('hanafi: 2 wife, 3 daughter, 1 paternal cousin', () => {
-  const result = calculate(
-    { wife: 2, daughter: 3, paternal_cousin: 1 },
-    'hanafi'
-  )
-  console.log(result, 'hanafi: 2 wife, 3 daughter, 1 paternal cousin')
-  checkResult(result, 'wife', f(1, 8))              // 1/8 is correct for wife
-  checkResult(result, 'daughter', f(2, 3))          // daughters get 2/3 collectively in Hanafi
-  checkResult(result, 'paternal_cousin', f(5, 24))  // cousin gets remainder 5/24 tasib
-})
+function expectHeirToBeBlocked(result: any[], heir: string) {
+  const match = result.find(h => h.name === heir)
+  expect(match).toBeUndefined()
+}
 
 
-test('Hanafi: grandfather blocks siblings', () => {
-  const result = calculate({ paternal_grand_father: 1, full_brother: 2 }, 'hanafi')
-  console.log(result, 'Hanafi: grandfather blocks siblings')
-  checkResult(result, 'paternal_grand_father', f(1, 1))
-  expect(findFromResult(result, 'full_brother')).toBeUndefined()
+// ☑️
+
+test('1 wife, 1 son', () => {
+  const result = calculate({ wife: 1, son: 1 }, 'hanafi')
+  checkResult(result, 'wife', f(1,8))
+  checkResult(result, 'son', f(7,8))
+})
+// ☑️
+
+test('husband, mother, 1 maternal_brother, 1 full_uncle', () => {
+  const result = calculate({
+    husband: 1,
+    mother: 1,
+    maternal_sibling: 1,
+    full_paternal_uncle: 1
+  }, 'hanafi')
+  checkResult(result, 'husband', f(1,2))
+  checkResult(result, 'mother', f(1,3))
+  checkResult(result, 'maternal_sibling', f(1,6))
+  checkResult(result, 'full_paternal_uncle', f(0))
+})
+// ☑️
+
+test('1 daughter, 2 full_sisters', () => {
+  const result = calculate({ daughter: 1, full_sister: 2 }, 'hanbali')
+  console.log(result, '1 daughter, 2 full_sisters')
+  checkResult(result, 'daughter', f(1,2))
+  checkResult(result, 'full_sister', f(1,2))
+})
+// ☑️
+
+
+test('2 daughters, 1 paternal_sister', () => {
+  const result = calculate({ daughter: 2, paternal_sister: 1 }, 'hanafi')
+  checkResult(result, 'daughter', f(2,3))
+  checkResult(result, 'paternal_sister', f(1,3))
+})
+
+// ☑️
+
+test('1 daughter, 1 paternal_grand_daughter, 2 full_sister', () => {
+  const result = calculate({
+    daughter: 1,
+    paternal_grand_daughter: 1,
+    full_sister: 2
+  }, 'hanafi')
+  checkResult(result, 'daughter', f(1,2))
+  checkResult(result, 'paternal_grand_daughter', f(1,6))
+  checkResult(result, 'full_sister', f(1,3))
+})
+// ☑️
+
+test('father, 1 full_brother', () => {
+  const result = calculate({ father: 1, full_brother: 1 }, 'hanafi')
+  checkResult(result, 'father', f(1))
+})
+
+// ☑️
+
+test('1 wife, 1 son, mother', () => {
+  const result = calculate({ wife: 1, son: 1, mother: 1 }, 'maliki')
+  checkResult(result, 'wife', f(1,8))
+  checkResult(result, 'son', f(17,24))
+  checkResult(result, 'mother', f(1,6))
+})
+
+// ☑️
+
+test('husband, 2 full_sister', () => {
+  const result = calculate({ husband: 1, full_sister: 2 }, 'hanafi')
+  checkResult(result, 'husband', f(3,7))
+  checkResult(result, 'full_sister', f(4,7))
 })
 
 
-test('Shafii: grandfather shares with siblings', () => {
-  const result = calculate({ paternal_grand_father: 1, full_brother: 2 }, 'shafii')
-  console.log(result, 'Shafii: grandfather shares with siblings')
-  checkResult(result, 'paternal_grand_father', f(1, 6))  // example value
-  checkResult(result, 'full_brother', f(5, 6))           // adjust according to your calculator
+// ☑️
+
+test('husband, father, mother', () => {
+  const result = calculate({ husband: 1, father: 1, mother: 1 }, 'hanafi')
+  checkResult(result, 'husband', f(1,2))
+  checkResult(result, 'father', f(1,3))
+  checkResult(result, 'mother', f(1,6))
 })
-test('Hanafi: daughter blocks granddaughter', () => {
-  const result = calculate({ daughter: 1, paternal_grand_daughter: 1 }, 'hanafi')
-  console.log(result, 'Hanafi: daughter blocks granddaughte')
-  checkResult(result, 'daughter', f(1, 2))
-  expect(findFromResult(result, 'paternal_grand_daughter')).toBeUndefined()
+
+  // Test Cases Provided by ChatGpt
+// ☑️
+
+test('grandfather with full brother (hanafi)', () => {
+  const result = calculate({ paternal_grand_father: 1, full_brother: 1 }, 'hanafi')
+  console.log(result, 'grandfather with full brother (hanafi)')
+  checkResult(result, 'paternal_grand_father', f(1, 1)) // full share
 })
-test('Hanafi: maternal brother not blocked by full brother', () => {
+// ☑️
+
+test('grandfather with full brother (shafii)', () => {
+  const result = calculate({ paternal_grand_father: 1, full_brother: 1 }, 'shafii')
+  console.log(result, 'grandfather with full brother (shafii)')
+  checkResult(result, 'paternal_grand_father', f(2, 3))
+  checkResult(result, 'full_brother', f(1, 3))
+})
+// ☑️
+
+test('maternal brother with full brother (hanafi)', () => {
   const result = calculate({ maternal_sibling: 1, full_brother: 1 }, 'hanafi')
-  console.log(result, 'Hanafi: maternal brother not blocked by full brother')
-  checkResult(result, 'maternal_sibling', f(1, 6))
+  checkResult(result, 'maternal_sibling', f(1,6))
 })
-test('Shafii: maternal brother blocked by full brother', () => {
+// ☑️
+
+test('maternal brother with full brother (shafii)', () => {
   const result = calculate({ maternal_sibling: 1, full_brother: 1 }, 'shafii')
-    console.log(result, 'Shafii: maternal brother blocked by full brother')
-  expect(findFromResult(result, 'maternal_sibling')).toBeUndefined()
+  console.log(result, 'maternal brother with full brother (shafii)')
+
+  // Check that maternal_sibling is NOT in the result
+  expect(result.find(r => r.name === 'maternal_sibling')).toBeUndefined()
+
+  // Check that full_brother got all
+  checkResult(result, 'full_brother', f(1))
 })
 
+// ☑️
 
-test('Awl case: 3 daughters, 2 full sisters, wife (all schools)', () => {
-  const result = calculate({ daughter: 3, full_sister: 2, wife: 1 }, 'shafii')  // or hanafi
-    console.log(result, 'Awl case: 3 daughters, 2 full sisters, wife (all schools)')
-  printResults(result)
-
-  const total = result.reduce((acc, r) => acc.add(r.share), f(0))
-  expect(total.equals(f(1))).toBe(true) // should add up to 1 after awl
-})
-test('2 wives share 1/8 together', () => {
-  const result = calculate({ wife: 2, son: 1 }, 'hanafi')
-    console.log(result, '2 wives share 1/8 together')
-  const wives = result.filter(r => r.name === 'wife')
-  wives.forEach(w => {
-    checkResult([w], 'wife', f(1, 16)) // each wife gets half of 1/8
-  })
-})
-test('Hanafi: step-grandmother inherits', () => {
+test('paternal grandmother exists (hanafi)', () => {
   const result = calculate({ paternal_grand_mother: 1 }, 'hanafi')
-    console.log(result, 'Hanafi: step-grandmother inherits')
-  expect(findFromResult(result, 'paternal_grand_mother')).toBeDefined()
+  console.log(result, 'paternal grandmother exists (hanafi)')
+  checkResult(result, 'paternal_grand_mother', f(1))
 })
-test('Shafii: step-grandmother does not inherit', () => {
+// ☑️
+
+test('paternal grandmother exists (shafii)', () => {
   const result = calculate({ paternal_grand_mother: 1 }, 'shafii')
-  console.log(result, 'Shafii: step-grandmother does not inherit')
-  expect(findFromResult(result, 'paternal_grand_mother')).toBeUndefined()
+  console.log(result, 'paternal grandmother exists (shafii)')
+  checkResult(result, 'paternal_grand_mother', f(1)) // Full estate due to Radd
+})
+// ☑️
+
+test('daughter with son’s daughter (hanafi)', () => {
+  const result = calculate({ daughter: 1, paternal_grand_daughter: 1 }, 'hanafi')
+  console.log(result, 'daughter with son’s daughter (hanafi)')
+  checkResult(result, 'daughter', f(3,4))
+  checkResult(result, 'paternal_grand_daughter', f(1,4))
+})
+// ☑️
+
+test('daughter with son’s daughter (shafii)', () => {
+  const result = calculate({ daughter: 1, paternal_grand_daughter: 1 }, 'shafii')
+  console.log(result, 'daughter with son’s daughter (shafii)')
+  checkResult(result, 'daughter', f(3,4))
+  checkResult(result, 'paternal_grand_daughter', f(1,4))
 })
 
 
-// test('Grandfather with siblings - Hanafi vs Others', () => {
-//   let result = calculate({ paternal_grand_father: 1, full_brother: 2 }, 'hanafi')
-//   console.log(result)  // Inspect the shares here
-//   checkResult(result, 'paternal_grand_father', f(1, 1))  // Adjusted to expected output
-//   expect(findResult(result, 'full_brother')).toBeUndefined()  // siblings blocked
 
-//   result = calculate({ paternal_grand_father: 1, full_brother: 2 }, 'shafii')
-//   checkResult(result, 'paternal_grand_father', f(1, 12))  // Assuming your code outputs this
-//   expect(findResult(result, 'full_brother')).toBeDefined()
-// })
+// ☑️
 
 
+test('father with maternal sibling (hanafi)', () => {
+  const result = calculate({ father: 1, maternal_sibling: 1 }, 'hanafi')
+  console.log(result, 'father with maternal sibling (hanafi)')
+  checkResult(result, 'maternal_sibling', f(1,6))
+})
+
+// ☑️
+
+test('father with maternal sibling (shafii)', () => {
+  const result = calculate({ father: 1, maternal_sibling: 1 }, 'shafii')
+  console.log(result, 'father with maternal sibling (shafii)')
+  expectHeirToBeBlocked(result, 'maternal_sibling')
+})

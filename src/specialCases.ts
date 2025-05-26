@@ -9,7 +9,8 @@ import {
 } from './result'
 import { sixth, quarter, third, half, nothing } from './quota'
 import { distribute } from './utils'
-import { Madhhab } from './madhab'
+import { getMadhhabFunctions } from './madhab'
+import { Madhhab } from './madhab/default'
 
 
 export function calculateSpecialCases(
@@ -17,6 +18,7 @@ export function calculateSpecialCases(
   asabaResult: Result[],
   madhhab: Madhhab
 ): Result[] {
+  const { applyAwl, applyRadd, applyUmariyyah } = getMadhhabFunctions(madhhab)
   const results = [...fardResult, ...asabaResult]
   // Pass madhhab to all cases that might need it
   return flow([
@@ -35,6 +37,7 @@ function awlCase(result: Result[], madhhab: Madhhab): Result[] {
     // Example: Hanafi might avoid awl in some cases by denying some heirs.
     if (madhhab === 'hanafi') {
       // Implement Hanafi-specific awl adjustments here if needed
+      
     }
     return result.map(r => ({
       ...r,

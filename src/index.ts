@@ -2,7 +2,7 @@ import { heirs as defaultHeirs, Heirs } from './heir'
 import { calculateFard } from './fard'
 import { calculateTasib } from './tasib'
 import { calculateSpecialCases } from './specialCases'
-import { Madhhab } from './madhab'
+import { Madhhab } from './madhab/default'
 
 const calculate = (heirs: Partial<Heirs>, madhhab: Madhhab = 'shafii') => {
   if (heirs.husband && heirs.wife) {
