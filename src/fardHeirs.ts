@@ -36,16 +36,44 @@ const Daughter: FardHeir = {
 const PaternalGrandDaughter: FardHeir = {
   name: 'paternal_grand_daughter',
   share: function(heirs, madhhab) {
-    if (exists(heirs, 'son') || exists(heirs, 'paternal_grand_son')) return nothing
-if (count(heirs, 'daughter') > 1) {
-  if (madhhab === 'hanafi') return nothing
-  return sixth // or use taʿsīb fallback in other madhhabs if applicable
-}
-    if (count(heirs, 'daughter') === 1) return sixth
-    if (count(heirs, this.name) === 1) return half
-    return twoThird
+    const daughterCount = count(heirs, 'daughter');
+    const selfCount = count(heirs, this.name);
+    const hasSon = exists(heirs, 'son') || exists(heirs, 'paternal_grand_son');
+    const fullSisters = count(heirs, 'full_sister');
+    const paternalSisters = count(heirs, 'paternal_sister');
+    const femaleAsabaSupport = fullSisters + paternalSisters;
+
+    if (hasSon) return nothing;
+
+    if (madhhab === 'hanafi') {
+      // ❌ Blocked if 1 daughter and no asaba support (e.g. sisters)
+      if (daughterCount === 1 && selfCount >= 1 && femaleAsabaSupport === 0) {
+        return nothing;
+      }
+
+      // ✅ Takmila allowed when full sisters help complete 2/3
+      if (daughterCount === 1 && selfCount >= 1 && femaleAsabaSupport > 0) {
+        return sixth;
+      }
+
+      if (daughterCount > 1) return nothing;
+
+      // No daughter: default Fard shares
+      if (selfCount === 1) return half;
+      if (selfCount > 1) return twoThird;
+
+      return nothing;
+    }
+
+    // Other madhhabs:
+    if (daughterCount === 1 && selfCount >= 1) return sixth;
+    if (daughterCount === 0 && selfCount === 1) return half;
+    if (daughterCount === 0 && selfCount > 1) return twoThird;
+
+    return nothing;
   }
-}
+};
+
 
 const Father: FardHeir = {
   name: 'father',

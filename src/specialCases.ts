@@ -51,28 +51,31 @@ function raddCase(result: Result[], madhhab: Madhhab): Result[] {
   const whole = new Fraction(1)
   const remaining = whole.sub(sumResults(result))
 
+  // Hanafis do NOT apply radd if there's only a daughter or other rules
+  if (madhhab === 'hanafi') {
+    const hasOnlyOneDaughter = result.length === 1 && result[0].name === 'daughter'
+    if (hasOnlyOneDaughter) return result
+  }
+
   if (remaining.compare(0) > 0) {
     const ratios = toRatio(
       result.map(r => {
         if ((r.name === 'wife' || r.name === 'husband') && result.length > 1) {
           return new Fraction(0)
         }
-        // Example: Different madhhab logic for radd shares could be here
         return r.share
       })
     )
 
     return zip(result, ratios).map(([r, ratio]) => {
-      if (!r || !ratio) {
-        throw Error('result and ratios should be equal in length')
-      }
-
+      if (!r || !ratio) throw Error('result and ratios should be equal in length')
       return { ...r, share: r.share.add(remaining.mul(ratio)) }
     })
   }
 
   return result
 }
+
 function mushtarakaCase(result: Result[]): Result[] {
   // This case does not currently need madhhab parameter
   const fullBrother = findFromResult(result, 'full_brother')

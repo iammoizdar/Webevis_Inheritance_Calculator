@@ -11,7 +11,7 @@ import { Madhhab } from './madhab/default'
 
 export function calculateFard(heirs: Heirs, madhhab: Madhhab): Result[] {
   const fardHiers = fhs.filter(fh => exists(heirs, fh.name))
-
+  console.log('you coming here calculate fard')
   const results = fardHiers
     .map(fh => {
       const result: Result = {
