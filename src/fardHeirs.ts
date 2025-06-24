@@ -171,23 +171,31 @@ const MaternalSibling: FardHeir = {
     return third
   }
 }
+// const FullBrother: FardHeir = {
+//   name: 'full_brother',
+//   share: function(heirs, madhhab) {
+//     if (madhhab === 'hanafi') {
+//       // Hanafi: full brother usually inherits only as tasib (no fixed share)
+//       return nothing
+//     } else {
+//       // Shafii and others:
+//       // If no sons/daughters, full brother may inherit 1/3 fixed share
+//       if (!exists(heirs, 'son') && !exists(heirs, 'daughter')) {
+//         return third
+//       }
+//       return nothing
+//     }
+//   }
+// }
 
 const FullBrother: FardHeir = {
   name: 'full_brother',
   share: function(heirs, madhhab) {
-    if (madhhab === 'hanafi') {
-      // Hanafi: full brother usually inherits only as tasib (no fixed share)
-      return nothing
-    } else {
-      // Shafii and others:
-      // If no sons/daughters, full brother may inherit 1/3 fixed share
-      if (!exists(heirs, 'son') && !exists(heirs, 'daughter')) {
-        return third
-      }
-      return nothing
-    }
+    // Full Brother never gets fard share in any madhhab
+    return nothing;
   }
 }
+
 
 
 const fhs: FardHeir[] = [
