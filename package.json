@@ -1,6 +1,6 @@
 {
   "name": "webevis-inheritance-calculator",
-  "version": "1.4.7",
+  "version": "1.4.8",
   "description": "Islamic inheritance calculator",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
