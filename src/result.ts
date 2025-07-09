@@ -1,7 +1,7 @@
 import Fraction from 'fraction.js'
 import { Heir } from './heir'
 
-export type Result = { name: Heir, count: number, type: 'tasib'|'fard'|'special_case', share: Fraction }
+export type Result = { name: Heir, count: number, type: 'tasib'|'fard'|'special_case', share: Fraction, proportion?: number }
 
 export const isFard = (result: Result) => result.type === 'fard' 
 export const isTasib = (result: Result) => result.type === 'tasib' 

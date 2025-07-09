@@ -78,7 +78,6 @@ test('husband, mother, 1 maternal_brother, 1 full_uncle', () => {
     maternal_sibling: 1,
     full_paternal_uncle: 1
   }, 'hanafi')
-  console.log(result, 'husband, mother, 1 maternal_brother, 1 full_uncle')
 
   // ✅ All madhhabs generally agree:
   // - Husband gets 1/2 (no children)
@@ -100,7 +99,6 @@ test('1 daughter, 1 grand_daughter, mother, 2 paternal_sister, 1 full_uncle', ()
     paternal_sister: 2,
     full_paternal_uncle: 1
   }, 'hanbali')
-  console.log(result, '1 daughter, 1 grand_daughter, mother, 2 paternal_sister, 1 full_uncle')
   checkResult(result, 'daughter', f(1,2))
   checkResult(result, 'paternal_grand_daughter', f(1,6))
   checkResult(result, 'mother', f(1,6))
@@ -111,7 +109,6 @@ test('1 daughter, 1 grand_daughter, mother, 2 paternal_sister, 1 full_uncle', ()
 
 test('1 daughter, 2 full_sisters', () => {
   const result = calculate({ daughter: 1, full_sister: 2 }, 'hanbali')
-  console.log(result, '1 daughter, 2 full_sisters')
   // ✅ All madhhabs:
   // - Daughter gets 1/2
   // - Full sisters become ʿaṣaba (residuary) with a daughter
@@ -131,7 +128,6 @@ test('2 daughters, 1 paternal_sister', () => {
 })
 test('2 daughters, 1 paternal_sister', () => {
   const result = calculate({ daughter: 2, paternal_sister: 1 }, 'shafii')
-  console.log(result, '2 daughters, 1 paternal_sister (shafii)')
   checkResult(result, 'daughter', f(2,3))
   checkResult(result, 'paternal_sister', f(1,3))
 })
@@ -142,7 +138,6 @@ test('1 daughter, 1 paternal_grand_daughter, 2 full_sister', () => {
     paternal_grand_daughter: 1,
     full_sister: 2
   }, 'hanafi')
-  console.log(result, '1 daughter, 1 paternal_grand_daughter, 2 full_sister')
   // ✅ All madhhabs:
   // - Daughter gets 1/2 (Qur’an 4:11)
   // - Granddaughter gets 1/6 (with daughter present)
@@ -154,20 +149,17 @@ test('1 daughter, 1 paternal_grand_daughter, 2 full_sister', () => {
 
 test('father, 1 full_brother', () => {
   const result = calculate({ father: 1, full_brother: 1 }, 'hanafi')
-  console.log(result, 'father, 1 full_brother')
   // ✅ All madhhabs:
   // - Father blocks full brother (closer male ancestor blocks siblings)
   checkResult(result, 'father', f(1))
 })
 test('father, 1 full_brother', () => {
   const result = calculate({ father: 1, full_brother: 1 }, 'hanbali')
-  console.log(result, 'father, 1 full_brother (shafi)')
   checkResult(result, 'father', f(1))
 })
 
 test('1 wife, 1 son, mother', () => {
   const result = calculate({ wife: 1, son: 1, mother: 1 }, 'maliki')
-  console.log(result, '1 wife, 1 son, mother')
   // ✅ All madhhabs:
   // - Wife gets 1/8
   // - Mother gets 1/6
@@ -180,7 +172,6 @@ test('1 wife, 1 son, mother', () => {
 
 test('husband, 2 full_sister', () => {
   const result = calculate({ husband: 1, full_sister: 2 }, 'hanafi')
-  console.log(result, 'husband, 2 full_sister')
   // 🔁 This is an ‘awl case:
   // - Husband gets 1/2
   // - 2 sisters get 2/3
@@ -192,14 +183,12 @@ test('husband, 2 full_sister', () => {
 
 test('awl case: husband and 2 full sisters (maliki)', () => {
   const result = calculate({ husband: 1, full_sister: 2 }, 'maliki')
-  console.log(result, 'awl case: husband and 2 full sisters (maliki)')
   checkResult(result, 'husband', f(3,7))
   checkResult(result, 'full_sister', f(4,7)) // Maliki allows awl
 })
 
 test('husband, father, mother', () => {
   const result = calculate({ husband: 1, father: 1, mother: 1 }, 'hanafi')
-  console.log(result, 'husband, father, mother')
   // ✅ All madhhabs:
   // - Husband: 1/2
   // - Mother: 1/6 (due to father)
@@ -212,13 +201,11 @@ test('husband, father, mother', () => {
 
 test('grandfather with full brother (hanafi)', () => {
   const result = calculate({ paternal_grand_father: 1, full_brother: 1 }, 'hanafi')
-  console.log(result, 'grandfather with full brother (hanafi)')
   // 📛 Hanafi: Grandfather blocks full brother entirely (he replaces father)
   checkResult(result, 'paternal_grand_father', f(1, 1))
 })
 test('grandfather with full brother (shafii)', () => {
   const result = calculate({ paternal_grand_father: 1, full_brother: 1 }, 'shafii')
-  console.log(result, 'grandfather with full brother (shafii)')
   // ✅ Other madhhabs: grandfather does NOT block full brother
   // Grandfather → 2/3, full brother → 1/3
   checkResult(result, 'paternal_grand_father', f(2, 3))
@@ -228,13 +215,11 @@ test('grandfather with full brother (shafii)', () => {
 
 test('maternal brother with full brother (hanafi)', () => {
   const result = calculate({ maternal_sibling: 1, full_brother: 1 }, 'hanafi')
-  console.log(result, 'maternal brother with full brother (hanafi)')
   // ✅ Hanafi: maternal sibling gets 1/6 (Qur’an 4:12), not blocked by full brother
   checkResult(result, 'maternal_sibling', f(1,6))
 })
 test('maternal brother with full brother (shafii)', () => {
   const result = calculate({ maternal_sibling: 1, full_brother: 1 }, 'shafii')
-  console.log(result, 'maternal brother with full brother (shafii)')
   // ❌ Shafi’i: full brother blocks maternal sibling
   expect(result.find(r => r.name === 'maternal_sibling')).toBeUndefined()
   checkResult(result, 'full_brother', f(1))
@@ -242,13 +227,11 @@ test('maternal brother with full brother (shafii)', () => {
 
 test('paternal grandmother exists (hanafi)', () => {
   const result = calculate({ paternal_grand_mother: 1 }, 'hanafi')
-  console.log(result, 'paternal grandmother exists (hanafi)')
   // ✅ Hanafi: if no other heirs, she gets whole estate via Radd
   checkResult(result, 'paternal_grand_mother', f(1))
 })
 test('paternal grandmother exists (shafii)', () => {
   const result = calculate({ paternal_grand_mother: 1 }, 'shafii')
-  console.log(result, 'paternal grandmother exists (shafii)')
   // ✅ All madhhabs: same here, takes entire estate due to Radd
   checkResult(result, 'paternal_grand_mother', f(1))
 })
@@ -257,7 +240,6 @@ test('paternal grandmother exists (shafii)', () => {
 
 test('daughter with son’s daughter (hanafi)', () => {  
   const result = calculate({ daughter: 1, paternal_grand_daughter: 1 }, 'hanafi')
-  console.log(result, 'daughter with son’s daughter (hanafi) below the other start')
   // ❌ Hanafi: Daughter blocks granddaughter entirely.
   checkResult(result, 'daughter', f(1/2))
   expectHeirToBeBlocked(result, 'paternal_grand_daughter')
@@ -266,7 +248,6 @@ test('daughter with son’s daughter (hanafi)', () => {
 
 test('daughter with son’s daughter (shafii)', () => {
   const result = calculate({ daughter: 1, paternal_grand_daughter: 1 }, 'shafii')
-  console.log(result, 'daughter with son’s daughter (shafii)')
   // ✅ Others: daughter 3/4, granddaughter 1/4, based on hadith of Hafsah (RA)
   checkResult(result, 'daughter', f(3,4))
   checkResult(result, 'paternal_grand_daughter', f(1,4))
@@ -277,13 +258,11 @@ test('daughter with son’s daughter (shafii)', () => {
 
 test('father with maternal sibling (hanafi)', () => {
   const result = calculate({ father: 1, maternal_sibling: 1 }, 'hanafi')
-  console.log(result, 'father with maternal sibling (hanafi)')
   // ✅ Hanafi: father does NOT block uterine sibling completely
   checkResult(result, 'maternal_sibling', f(1,6))
 })
 test('father with maternal sibling (shafii)', () => {
   const result = calculate({ father: 1, maternal_sibling: 1 }, 'shafii')
-  console.log(result, 'father with maternal sibling (shafii)')
   // ❌ Others: father blocks maternal sibling fully
   expectHeirToBeBlocked(result, 'maternal_sibling')
 })
@@ -329,7 +308,6 @@ test('daughter + paternal granddaughter + full brother (shafii)', () => {
 
 xtest('husband, mother, 1 grand_father, 1 full_sister', () => {
   const result = calculate({ husband: 1, mother: 1, paternal_grand_father: 1, full_sister: 1 }, 'hanbali')
-  console.log(result, 'husband, mother, 1 grand_father, 1')
   checkResult(result, 'husband', f(1,3))
   checkResult(result, 'mother', f(2,9))
   checkResult(result, 'paternal_grand_father', f(8,27))
@@ -338,13 +316,11 @@ xtest('husband, mother, 1 grand_father, 1 full_sister', () => {
 
 test('1 grand_father, 3 full_brother', () => {
   const result = calculate({ paternal_grand_father: 1, full_brother: 3 })
-  console.log(result, '1 grand_father, 3 full_brother')
   checkResult(result, 'paternal_grand_father', f(1,3))
   checkResult(result, 'full_brother', f(2,3))
 })
 test('Wife 1, Daughter 2, Father 1, Mother 1', () => {
   const result = calculate({ wife: 1, daughter: 2, father: 1, mother: 1})
-  console.log(result, 'Wife 1, Daughter 2, Father 1, Mother 1')
 
 })
 
@@ -356,7 +332,6 @@ test('husband, mother, 1 full_brother, 1 full_sister, 1 full_uncle', () => {
     full_sister: 1,
     full_paternal_uncle: 1
   }, 'hanbali')
-  console.log(result, 'husband, mother, 1 full_brother, 1 full_sister, 1 full_uncle')
   // ✅ All madhhabs:
   checkResult(result, 'husband', f(1,2))
   checkResult(result, 'mother', f(1,6))
@@ -371,7 +346,6 @@ test('2 wife, 1 daughter, 1 father, 1 grand_father, 1 full_brother', () => {
     paternal_grand_father: 1,
     full_brother: 1
   }, 'maliki')
-  console.log(result, '2 wife, 1 daughter, 1 father, 1 grand_father, 1 full_brother')
   checkResult(result, 'wife', f(1,8))
   checkResult(result, 'daughter', f(1,2))
   checkResult(result, { name: 'father', type: 'fard' }, f(1,6))
@@ -380,9 +354,109 @@ test('2 wife, 1 daughter, 1 father, 1 grand_father, 1 full_brother', () => {
 
 test('2 full_brother, 1 full_sister', () => {
   const result = calculate({ full_brother: 2, full_sister: 1 }, 'hanbali')
-  console.log(result, '2 full_brother, 1 full_sister')
   checkResult(result, 'full_brother', f(4,5))
   checkResult(result, 'full_sister', f(1,5))
+})
+
+test('husband, mother, 2 full_brother, 2 maternal_sibling', () => {
+  const result = calculate({
+    husband: 1,
+    mother: 1,
+    full_brother: 2,
+    maternal_sibling: 2
+  }, 'hanbali');
+
+
+  checkResult(result, 'husband', f(1, 2));      // 1/2
+  checkResult(result, 'mother', f(1, 6));       // 1/6
+  checkResult(result, 'full_brother', f(1, 3)); // 1/3 total shared by 2 → each gets 1/6
+
+  // Do NOT check for maternal siblings – they are excluded
+});
+test('husband, mother, 1 grand_father, 1 full_sister', () => {
+  const result = calculate({ husband: 1, mother: 1, paternal_grand_father: 1, full_sister: 1 }, 'hanbali')
+  // ✅ All madhhabs:
+  checkResult(result, 'husband', f(1,3))
+  checkResult(result, 'mother', f(2,9))
+  checkResult(result, 'paternal_grand_father', f(8,27))
+  checkResult(result, 'full_sister', f(4,27))
+})
+
+test('2 wife, 1 daughter, 1 father, 1 grand_father, 1 full_brother', () => {
+  const result = calculate({
+    wife: 2,
+    daughter: 1,
+    father: 1,
+    paternal_grand_father: 1,
+    full_brother: 1
+  })
+  checkResult(result, 'wife', f(1,8))
+  checkResult(result, 'daughter', f(1,2))
+  checkResult(result, { name: 'father', type: 'fard' }, f(1,6))
+  checkResult(result, { name: 'father', type: 'tasib' }, f(5,24))
+})
+test('1 wife, 1 daughter, 1 father', () => {
+  const result = calculate({ wife: 1, daughter: 1, father: 1 })
+  checkResult(result, 'wife', f(1,8))
+  checkResult(result, 'daughter', f(1,2))
+  checkResult(result, { name: 'father', type: 'fard' }, f(1,6))
+  checkResult(result, { name: 'father', type: 'tasib' }, f(5,24))
+})
+
+
+test('mother, 1 full_brother, 1 maternal_brother', () => {
+  const result = calculate({ mother: 1, full_brother: 1, maternal_sibling: 1 })
+  checkResult(result, 'mother', f(1,6))
+  checkResult(result, 'full_brother', f(2,3))
+  checkResult(result, 'maternal_sibling', f(1,6)) // should be blocked
+})
+
+test('1 paternal_grand_mother, 1 full_sister, 1 maternal_sibling', () => {
+  const result = calculate({
+    paternal_grand_mother: 1,
+    full_sister: 1,
+    maternal_sibling: 1
+  }, 'shafii'); // or 'hanbali', 'maliki'
+
+  console.log(result, '1 paternal_grand_mother, 1 full_sister, 1 maternal_sibling');
+
+  checkResult(result, 'paternal_grand_mother', f(1, 6));
+  checkResult(result, 'maternal_sibling', f(1, 6));
+  checkResult(result, 'full_sister', f(2, 3));
+});
+test('1 paternal_grand_mother, 1 full_sister, 1 maternal_sibling', () => {
+  const result = calculate({
+    paternal_grand_mother: 1,
+    full_sister: 1,
+    maternal_sibling: 1
+  }, 'hanbali')
+
+  checkResult(result, 'paternal_grand_mother', f(1,5))
+  checkResult(result, 'full_sister', f(3,5))
+  checkResult(result, 'maternal_sibling', f(1,5))
+})
+
+test('husband, 1 daughter, father', () => {
+  const result = calculate({ husband: 1, daughter: 1, father: 1 })
+  checkResult(result, 'husband', f(1,4))
+  checkResult(result, 'daughter', f(1,2))
+  checkResult(result, { name: 'father', type: 'fard' }, f(1,6))
+  checkResult(result, { name: 'father', type: 'tasib' }, f(1,12))
+})
+
+test('2 daughter, 2 maternal_sibling', () => {
+  const result = calculate({ daughter: 2, maternal_sibling: 2})
+  checkResult(result, 'daughter', f(1))
+})
+
+test('husband, mother, 1 grand_father, 1 full_sister', () => {
+  const result = calculate({ husband: 1, mother: 1, paternal_grand_father: 1, full_sister: 1 }, 'hanbali')
+  console.log(result, 'husband, mother, 1 grand_father, 1')
+checkResult(result, 'husband', f(1,2))                     // ✅
+checkResult(result, 'mother', f(1,6))                      // ✅
+checkResult(result, 'paternal_grand_father', f(2,9))       // ✅ or f(8,27)
+checkResult(result, 'full_sister', f(1,9))                 // ✅ or f(4,27)
+
 })
 
 // GOTTA CHECK THESE ONE

@@ -107,13 +107,7 @@ const PaternalGrandFather: FardHeir = {
   share: function(heirs, madhhab) {
     if (exists(heirs, 'father')) return nothing
     if (hasChild(heirs)) return sixth
-
-    if (madhhab === 'hanafi') {
-      // Hanafi excludes paternal grandfather if full siblings exist
-      if (exists(heirs, 'full_brother') || exists(heirs, 'full_sister')) return nothing
-    }
-
-    // If no father, no children, and no full siblings (Hanafi or others)
+    // For all madhhabs: if no father and no children, fard share is nothing (asaba logic will handle)
     return nothing
   }
 }

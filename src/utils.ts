@@ -21,7 +21,17 @@ export const hasGroupOfSiblings = (heirs: Heirs) => {
   siblings.forEach(sibling => count += heirs[sibling])
   return count > 1
 }
+// export const hasGroupOfSiblings = (heirs: Heirs) => {
+//   const siblings: Heir[] = [
+//     'full_brother', 'full_sister',
+//     'paternal_brother', 'paternal_sister',
+//     'maternal_sibling'
+//   ]
 
+//   let count = 0
+//   siblings.forEach(sibling => count += heirs[sibling])
+//   return count > 0  // ✅ Fix: at least 1 sibling triggers hajb
+// }
 export const hasPaternalMaleAncestor = (heirs: Heirs) => {
   const ancestors: Heir[] = ['father', 'paternal_grand_father']
   return ancestors.some(ancestor => exists(heirs, ancestor))
